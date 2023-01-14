@@ -2,13 +2,13 @@ package middlewares
 
 import (
 	"bytes"
+	"cert-proxy/config"
 	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"proxy-gateway/config"
 	"strings"
 
 	"github.com/gin-gonic/gin"

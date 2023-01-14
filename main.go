@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"proxy-gateway/config"
-	"proxy-gateway/middlewares"
+	"cert-proxy/config"
+	"cert-proxy/middlewares"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
@@ -22,7 +22,7 @@ func main() {
 
 	conf := config.GetConfig()
 
-	logger.SetupLog("logs", "proxy-gateway", false)
+	logger.SetupLog("logs", "cert-proxy", false)
 	logger.Start()
 	logger.Custom(conf.PrintJson())
 
