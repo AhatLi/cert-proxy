@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -47,7 +48,8 @@ func main() {
 	}
 
 	if err := g.Wait(); err != nil {
-		// error log
+		fmt.Println(err)
+		//error log
 	}
 }
 

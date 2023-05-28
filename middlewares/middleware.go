@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"cert-proxy/config"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -54,23 +53,34 @@ func ReturnReverseProxy() gin.HandlerFunc {
 	}
 }
 
+type BodyWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer
+}
+
 type bodyLogWriter struct {
 	gin.ResponseWriter
 	body *bytes.Buffer
 }
 
+type responseBodyWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer
+}
+
+func (r bodyLogWriter) Write(b []byte) (int, error) {
+	return r.body.Write(b)
+}
+
 func GinBodyLogMiddleware(c *gin.Context) {
 	blw := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
 	c.Writer = blw
+	c.Next()
 
-	if c.Request.Body != nil {
-		b, err := ioutil.ReadAll(c.Request.Body)
-		if err != nil {
-			// handle error
-		}
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(b))
-	}
+	body := blw.body.String()
+	newBody := strings.ReplaceAll(body, "http://"+c.Request.Host, "https://"+c.Request.Host)
 
-	fmt.Println("c.Writer", blw.body.String())
-	fmt.Println("c.Writer.Status()", c.Writer.Status())
+	blw.body = &bytes.Buffer{}
+	blw.Write([]byte(newBody))
+	blw.ResponseWriter.Write(blw.body.Bytes())
 }
